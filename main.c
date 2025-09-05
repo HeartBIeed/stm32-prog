@@ -3,16 +3,23 @@
 #include "core_cm0.h"
 
 
-int main(void) {
-    // Включаем тактирование GPIOC
-    RCC->AHBENR |= RCC_AHBENR_GPIOCEN;
+void _init(void){}
 
-    // PC8 в режим выхода
-    GPIOC->MODER &= ~(3 << (8 * 2));
-    GPIOC->MODER |=  (1 << (8 * 2));
+int main(void)
+{
+    // Включаем тактирование порта A
+    RCC->AHBENR |= RCC_AHBENR_GPIOAEN;
 
-    while (1) {
-        GPIOC->ODR ^= (1 << 8);  // мигаем ножкой
-        for (volatile int i = 0; i < 100000; i++);
+    // Настраиваем PA0 как выход (MODER = 01)
+    GPIOA->MODER &= ~(0x3 << (0 * 2)); // Сбрасываем биты
+    GPIOA->MODER |=  (0x1 << (0 * 2)); // Устанавливаем выход
+
+    while(1)
+    {
+        GPIOA->ODR ^= GPIO_ODR_0; // Инвертируем состояние PA0
+  for (volatile int i = 0; i < 8000; i++);
+
     }
 }
+
+

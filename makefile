@@ -5,7 +5,7 @@ OBJCOPY=arm-none-eabi-objcopy
 SIZE=arm-none-eabi-size
 
 
-CFLAGS=-mcpu=cortex-m0 -mthumb -O2 -Wall -ffreestanding -nostdlib
+CFLAGS=-mcpu=cortex-m0 -mthumb -O2 -Wall -ffreestanding -nostdlib -DSTM32F030x6
 LDFLAGS=-Tstm32f030x6.ld -nostdlib -Wl,--gc-sections
 
 
