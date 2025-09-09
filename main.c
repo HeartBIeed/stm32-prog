@@ -1,25 +1,31 @@
-#include "stm32f0xx.h"
+
+
 #include "stm32f030x6.h"
-#include "core_cm0.h"
 
-
-void _init(void){}
-
-int main(void)
+int
+main( void )
 {
-    // Включаем тактирование порта A
-    RCC->AHBENR |= RCC_AHBENR_GPIOAEN;
+  // ====================
+  // Setup GPIO A pin PA0
+  // ====================
 
-    // Настраиваем PA0 как выход (MODER = 01)
-    GPIOA->MODER &= ~(0x3 << (0 * 2)); // Сбрасываем биты
-    GPIOA->MODER |=  (0x1 << (0 * 2)); // Устанавливаем выход
+  // 1. Enable GPIO Port A by setting the GPIOAEN bit in the RCC AHBENR register
+  RCC->AHBENR |= RCC_AHBENR_GPIOAEN; 
 
-    while(1)
-    {
-        GPIOA->ODR ^= GPIO_ODR_0; // Инвертируем состояние PA0
-  for (volatile int i = 0; i < 8000; i++);
+  // 2. Set MODER0[1:0] bits in the GPIOA MODER register to 0b01 to make pin PA0 function as
+  // an output.
+  GPIOA->MODER |= ( 0b01 << GPIO_MODER_MODER0_Pos );
 
-    }
+  // Endless Loop
+  while( 1 )
+  {
+    // Flip the outpout bit for PA0 in the GPIOA ODR register.
+    GPIOA->ODR ^= GPIO_ODR_0;
+
+    // Half-second delay:
+    // There are about 13 instructions executed for each cycle of the for loop. We need to
+    // burn 4 million cycles to make 0.5 seconds, therefore:
+    // 4E6 (0.5 second) cycles / 13 = 307,692 for-loop cycles should equal about 0.5 seconds.
+    for( uint32_t x=0; x<308e3; x++) ;
+  }
 }
-
-
