@@ -1,32 +1,34 @@
+SOURCE    = main
+MCPU      = cortex-m0
+STARTUP   = startup_stm32f030f4px
+LOADER    = STM32F030F4PX_FLASH.ld
+OBJCOPY = arm-none-eabi-objcopy
+
+CC = arm-none-eabi-gcc
+
+CFLAGS = -mcpu=$(MCPU) -g3 --specs=nano.specs -mthumb -mfloat-abi=soft -Wall
+
+INCLUDE1 =STM32CubeF0/Drivers/CMSIS/Device/ST/STM32F0xx/Include
+INCLUDE2 =STM32CubeF0/Drivers/CMSIS/Include
+ST_INCL  =STM32CubeF0/Core/Startup
+
+all: build/main.hex 
+
+build/$(SOURCE).elf: build/$(SOURCE).o $(STARTUP).o $(LOADER) Makefile
+	$(CC) -o $@ build/$(SOURCE).o $(STARTUP).o -mcpu=$(MCPU) --specs=nosys.specs -T"$(LOADER)" \
+	-Wl,-Map=build/$(SOURCE).map -Wl,--gc-sections -static --specs=nano.specs -mfloat-abi=soft -mthumb \
+	-Wl,--start-group -lc -lm -Wl,--end-group
+	arm-none-eabi-size build/$(SOURCE).elf
+	
+$(STARTUP).o: $(ST_INCL)/$(STARTUP).s Makefile
+	$(CC) $(CFLAGS) -DDEBUG -c -x assembler-with-cpp -o $@ $<
+
+build/$(SOURCE).o: $(SOURCE).c Makefile
+	$(CC) $< $(CFLAGS) -I$(INCLUDE1) -I$(INCLUDE2) -std=gnu11 \
+	-c -O0 -ffunction-sections -fdata-sections -Wall -fstack-usage -o $@
 
 
-CC=arm-none-eabi-gcc
-OBJCOPY=arm-none-eabi-objcopy
-SIZE=arm-none-eabi-size
-
-
-CFLAGS=-mcpu=cortex-m0 -mthumb -O2 -Wall -ffreestanding -nostdlib -DSTM32F030x6
-LDFLAGS=-Tstm32f030x6.ld -nostdlib -Wl,--gc-sections
-
-
-OBJS=main.o system_stm32f0xx.o startup_stm32f030x6.o
-
-
-all: main.bin main.hex
-
-%.o: %.c
-	$(CC) $(CFLAGS) -c $< -o $@
-
-%.o: %.s
-	$(CC) $(CFLAGS) -c $< -o $@
-
-main.elf: $(OBJS)
-	$(CC) $(CFLAGS) $(LDFLAGS) -o $@ $(OBJS)
-	$(SIZE) $@
-
-main.bin: main.elf
-	$(OBJCOPY) -O binary $< $@
-
-main.hex: main.elf
+build/$(SOURCE).hex: build/$(SOURCE).elf
 	$(OBJCOPY) -O ihex $< $@
+
 
