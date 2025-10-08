@@ -8,9 +8,9 @@ CC = arm-none-eabi-gcc
 
 CFLAGS = -mcpu=$(MCPU) -g3 --specs=nano.specs -mthumb -mfloat-abi=soft -Wall
 
-INCLUDE1 =/Drivers/CMSIS/Device/ST/STM32F0xx/Include
-INCLUDE2 =/Drivers/CMSIS/Include
-ST_INCL  =/Core/Startup
+INCLUDE1 =Drivers/CMSIS/Device/ST/STM32F0xx/Include
+INCLUDE2 =Drivers/CMSIS/Include
+ST_INCL  =Core/Startup
 
 all: build/main.hex 
 
