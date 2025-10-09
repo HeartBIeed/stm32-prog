@@ -1,14 +1,15 @@
 SOURCE    = main
-MCPU      = cortex-m0
-STARTUP   = startup_stm32f030f4px
-LOADER    = STM32F030F4PX_FLASH.ld
+MCPU      = cortex-m3
+STARTUP   = startup_stm32f103c8tx.s
+LOADER    = STM32F103C8TX_FLASH.ld
 OBJCOPY = arm-none-eabi-objcopy
 
 CC = arm-none-eabi-gcc
 
 CFLAGS = -mcpu=$(MCPU) -g3 --specs=nano.specs -mthumb -mfloat-abi=soft -Wall
 
-INCLUDE1 =Drivers/CMSIS/Device/ST/STM32F0xx/Include
+
+INCLUDE1 =Drivers/CMSIS/Device/ST/STM32F1xx/Include
 INCLUDE2 =Drivers/CMSIS/Include
 ST_INCL  =Core/Startup
 

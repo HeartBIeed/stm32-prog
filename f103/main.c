@@ -1,37 +1,34 @@
 
+#include "Drivers/CMSIS/Device/ST/STM32F1xx/Include/stm32f103xb.h"
 
-#include "stm32f030x6.h"
-
-int main( void )
+int main(void)
 {
- 
+RCC->APB2ENR |= RCC_APB2ENR_IOPAEN;
 
-	RCC->AHBENR |= RCC_AHBENR_GPIOAEN; 
-	RCC->AHBENR |= RCC_AHBENR_GPIOBEN; 
+GPIOA->CRL &= ~(0xF<<0); //pa0
+GPIOA->CRL |= (0x2<<0);
 
-	GPIOB->MODER &= ~( 0xFF << (1*2)); //pb1 / input 00
-	GPIOB->MODER |= ( 0x01 << (3*2)); //pb3 / output 01
-	GPIOA->MODER |= ( 0x01 << (15*2)); //pa15 / output 01
-	 
-	GPIOB->PUPDR |= ( 0x01 << (1*2)); //pb1 / up 01
+GPIOA->CRL &= ~(0xF<<4); //pa1
+GPIOA->CRL |= (0b1000<<4);
+GPIOA->ODR |= (1<<1);
 
-
- while( 1 )
-	{
+  while (1)
+  {
 
 
-		if ((GPIOB->IDR & (1<<1))==0)
-			{
-			GPIOA->ODR |= (1 << 15);
-			GPIOB->ODR &= ~(1 << 3);
-			}
-		else 
-			{
-			GPIOA->ODR &= ~(1 << 15);
-			GPIOB->ODR |= (1 << 3);
-			}
+	  if (!(GPIOA->IDR & (1<<1)))
+	  {
+	  GPIOA->BSRR = (1<<0);
 
-		    
+	  }
+	  else{
+		  GPIOA->BSRR = (1<<16);
+		  for(int i =0;i < 100000; i++);
+		  GPIOA->BSRR = (1<<0);
+		  for(int i =0;i < 100000; i++);
 
-	}
+
+	  }
+  }
 }
+
