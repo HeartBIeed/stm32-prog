@@ -54,8 +54,6 @@ Discarded input sections
  .text          0x0000000000000000        0x0 build/main.o
  .data          0x0000000000000000        0x0 build/main.o
  .bss           0x0000000000000000        0x0 build/main.o
- .text.usart1_send_byte
-                0x0000000000000000       0x30 build/main.o
  .text          0x0000000000000000       0x14 startup_stm32f030f4px.o
  .data          0x0000000000000000        0x0 startup_stm32f030f4px.o
  .bss           0x0000000000000000        0x0 startup_stm32f030f4px.o
@@ -231,7 +229,7 @@ LOAD /usr/lib/gcc/arm-none-eabi/10.3.1/thumb/v6-m/nofp/crtn.o
                 0x0000000008000000                g_pfnVectors
                 0x00000000080000c0                . = ALIGN (0x4)
 
-.text           0x00000000080000c0      0x418
+.text           0x00000000080000c0      0x450
                 0x00000000080000c0                . = ALIGN (0x4)
  *(.text)
  .text          0x00000000080000c0       0x98 /usr/lib/gcc/arm-none-eabi/10.3.1/thumb/v6-m/nofp/crtbegin.o
@@ -248,117 +246,120 @@ LOAD /usr/lib/gcc/arm-none-eabi/10.3.1/thumb/v6-m/nofp/crtn.o
  .text.UART_init
                 0x00000000080002b4       0xf4 build/main.o
                 0x00000000080002b4                UART_init
+ .text.usart1_send_byte
+                0x00000000080003a8       0x30 build/main.o
+                0x00000000080003a8                usart1_send_byte
  .text.usart1_recieve_byte
-                0x00000000080003a8       0x24 build/main.o
-                0x00000000080003a8                usart1_recieve_byte
- .text.main     0x00000000080003cc       0xa4 build/main.o
-                0x00000000080003cc                main
+                0x00000000080003d8       0x24 build/main.o
+                0x00000000080003d8                usart1_recieve_byte
+ .text.main     0x00000000080003fc       0xac build/main.o
+                0x00000000080003fc                main
  .text.Reset_Handler
-                0x0000000008000470       0x4c startup_stm32f030f4px.o
-                0x0000000008000470                Reset_Handler
+                0x00000000080004a8       0x4c startup_stm32f030f4px.o
+                0x00000000080004a8                Reset_Handler
  .text.Default_Handler
-                0x00000000080004bc        0x2 startup_stm32f030f4px.o
-                0x00000000080004bc                TIM1_CC_IRQHandler
-                0x00000000080004bc                HardFault_Handler
-                0x00000000080004bc                SysTick_Handler
-                0x00000000080004bc                PendSV_Handler
-                0x00000000080004bc                NMI_Handler
-                0x00000000080004bc                I2C1_IRQHandler
-                0x00000000080004bc                SPI1_IRQHandler
-                0x00000000080004bc                EXTI2_3_IRQHandler
-                0x00000000080004bc                ADC1_IRQHandler
-                0x00000000080004bc                TIM17_IRQHandler
-                0x00000000080004bc                RTC_IRQHandler
-                0x00000000080004bc                TIM16_IRQHandler
-                0x00000000080004bc                TIM3_IRQHandler
-                0x00000000080004bc                EXTI4_15_IRQHandler
-                0x00000000080004bc                RCC_IRQHandler
-                0x00000000080004bc                DMA1_Channel1_IRQHandler
-                0x00000000080004bc                Default_Handler
-                0x00000000080004bc                TIM14_IRQHandler
-                0x00000000080004bc                DMA1_Channel4_5_IRQHandler
-                0x00000000080004bc                EXTI0_1_IRQHandler
-                0x00000000080004bc                SVC_Handler
-                0x00000000080004bc                WWDG_IRQHandler
-                0x00000000080004bc                DMA1_Channel2_3_IRQHandler
-                0x00000000080004bc                FLASH_IRQHandler
-                0x00000000080004bc                USART1_IRQHandler
-                0x00000000080004bc                TIM1_BRK_UP_TRG_COM_IRQHandler
+                0x00000000080004f4        0x2 startup_stm32f030f4px.o
+                0x00000000080004f4                TIM1_CC_IRQHandler
+                0x00000000080004f4                HardFault_Handler
+                0x00000000080004f4                SysTick_Handler
+                0x00000000080004f4                PendSV_Handler
+                0x00000000080004f4                NMI_Handler
+                0x00000000080004f4                I2C1_IRQHandler
+                0x00000000080004f4                SPI1_IRQHandler
+                0x00000000080004f4                EXTI2_3_IRQHandler
+                0x00000000080004f4                ADC1_IRQHandler
+                0x00000000080004f4                TIM17_IRQHandler
+                0x00000000080004f4                RTC_IRQHandler
+                0x00000000080004f4                TIM16_IRQHandler
+                0x00000000080004f4                TIM3_IRQHandler
+                0x00000000080004f4                EXTI4_15_IRQHandler
+                0x00000000080004f4                RCC_IRQHandler
+                0x00000000080004f4                DMA1_Channel1_IRQHandler
+                0x00000000080004f4                Default_Handler
+                0x00000000080004f4                TIM14_IRQHandler
+                0x00000000080004f4                DMA1_Channel4_5_IRQHandler
+                0x00000000080004f4                EXTI0_1_IRQHandler
+                0x00000000080004f4                SVC_Handler
+                0x00000000080004f4                WWDG_IRQHandler
+                0x00000000080004f4                DMA1_Channel2_3_IRQHandler
+                0x00000000080004f4                FLASH_IRQHandler
+                0x00000000080004f4                USART1_IRQHandler
+                0x00000000080004f4                TIM1_BRK_UP_TRG_COM_IRQHandler
  *(.glue_7)
- .glue_7        0x00000000080004be        0x0 linker stubs
+ .glue_7        0x00000000080004f6        0x0 linker stubs
  *(.glue_7t)
- .glue_7t       0x00000000080004be        0x0 linker stubs
+ .glue_7t       0x00000000080004f6        0x0 linker stubs
  *(.eh_frame)
- *fill*         0x00000000080004be        0x2 
- .eh_frame      0x00000000080004c0        0x0 /usr/lib/gcc/arm-none-eabi/10.3.1/thumb/v6-m/nofp/crtbegin.o
+ *fill*         0x00000000080004f6        0x2 
+ .eh_frame      0x00000000080004f8        0x0 /usr/lib/gcc/arm-none-eabi/10.3.1/thumb/v6-m/nofp/crtbegin.o
  *(.init)
- .init          0x00000000080004c0        0x4 /usr/lib/gcc/arm-none-eabi/10.3.1/thumb/v6-m/nofp/crti.o
-                0x00000000080004c0                _init
- .init          0x00000000080004c4        0x8 /usr/lib/gcc/arm-none-eabi/10.3.1/thumb/v6-m/nofp/crtn.o
+ .init          0x00000000080004f8        0x4 /usr/lib/gcc/arm-none-eabi/10.3.1/thumb/v6-m/nofp/crti.o
+                0x00000000080004f8                _init
+ .init          0x00000000080004fc        0x8 /usr/lib/gcc/arm-none-eabi/10.3.1/thumb/v6-m/nofp/crtn.o
  *(.fini)
- .fini          0x00000000080004cc        0x4 /usr/lib/gcc/arm-none-eabi/10.3.1/thumb/v6-m/nofp/crti.o
-                0x00000000080004cc                _fini
- .fini          0x00000000080004d0        0x8 /usr/lib/gcc/arm-none-eabi/10.3.1/thumb/v6-m/nofp/crtn.o
-                0x00000000080004d8                . = ALIGN (0x4)
-                0x00000000080004d8                _etext = .
+ .fini          0x0000000008000504        0x4 /usr/lib/gcc/arm-none-eabi/10.3.1/thumb/v6-m/nofp/crti.o
+                0x0000000008000504                _fini
+ .fini          0x0000000008000508        0x8 /usr/lib/gcc/arm-none-eabi/10.3.1/thumb/v6-m/nofp/crtn.o
+                0x0000000008000510                . = ALIGN (0x4)
+                0x0000000008000510                _etext = .
 
-.vfp11_veneer   0x00000000080004d8        0x0
- .vfp11_veneer  0x00000000080004d8        0x0 linker stubs
+.vfp11_veneer   0x0000000008000510        0x0
+ .vfp11_veneer  0x0000000008000510        0x0 linker stubs
 
-.v4_bx          0x00000000080004d8        0x0
- .v4_bx         0x00000000080004d8        0x0 linker stubs
+.v4_bx          0x0000000008000510        0x0
+ .v4_bx         0x0000000008000510        0x0 linker stubs
 
-.iplt           0x00000000080004d8        0x0
- .iplt          0x00000000080004d8        0x0 /usr/lib/gcc/arm-none-eabi/10.3.1/thumb/v6-m/nofp/crtbegin.o
+.iplt           0x0000000008000510        0x0
+ .iplt          0x0000000008000510        0x0 /usr/lib/gcc/arm-none-eabi/10.3.1/thumb/v6-m/nofp/crtbegin.o
 
-.rel.dyn        0x00000000080004d8        0x0
- .rel.iplt      0x00000000080004d8        0x0 /usr/lib/gcc/arm-none-eabi/10.3.1/thumb/v6-m/nofp/crtbegin.o
+.rel.dyn        0x0000000008000510        0x0
+ .rel.iplt      0x0000000008000510        0x0 /usr/lib/gcc/arm-none-eabi/10.3.1/thumb/v6-m/nofp/crtbegin.o
 
-.rodata         0x00000000080004d8        0x0
-                0x00000000080004d8                . = ALIGN (0x4)
+.rodata         0x0000000008000510        0x0
+                0x0000000008000510                . = ALIGN (0x4)
  *(.rodata)
  *(.rodata*)
-                0x00000000080004d8                . = ALIGN (0x4)
+                0x0000000008000510                . = ALIGN (0x4)
 
-.ARM.extab      0x00000000080004d8        0x0
-                0x00000000080004d8                . = ALIGN (0x4)
+.ARM.extab      0x0000000008000510        0x0
+                0x0000000008000510                . = ALIGN (0x4)
  *(.ARM.extab* .gnu.linkonce.armextab.*)
-                0x00000000080004d8                . = ALIGN (0x4)
+                0x0000000008000510                . = ALIGN (0x4)
 
-.ARM            0x00000000080004d8        0x0
-                0x00000000080004d8                . = ALIGN (0x4)
-                0x00000000080004d8                __exidx_start = .
+.ARM            0x0000000008000510        0x0
+                0x0000000008000510                . = ALIGN (0x4)
+                0x0000000008000510                __exidx_start = .
  *(.ARM.exidx*)
-                0x00000000080004d8                __exidx_end = .
-                0x00000000080004d8                . = ALIGN (0x4)
+                0x0000000008000510                __exidx_end = .
+                0x0000000008000510                . = ALIGN (0x4)
 
-.preinit_array  0x00000000080004d8        0x0
-                0x00000000080004d8                . = ALIGN (0x4)
-                0x00000000080004d8                PROVIDE (__preinit_array_start = .)
+.preinit_array  0x0000000008000510        0x0
+                0x0000000008000510                . = ALIGN (0x4)
+                0x0000000008000510                PROVIDE (__preinit_array_start = .)
  *(.preinit_array*)
-                0x00000000080004d8                PROVIDE (__preinit_array_end = .)
-                0x00000000080004d8                . = ALIGN (0x4)
+                0x0000000008000510                PROVIDE (__preinit_array_end = .)
+                0x0000000008000510                . = ALIGN (0x4)
 
-.init_array     0x00000000080004d8        0x4
-                0x00000000080004d8                . = ALIGN (0x4)
-                0x00000000080004d8                PROVIDE (__init_array_start = .)
+.init_array     0x0000000008000510        0x4
+                0x0000000008000510                . = ALIGN (0x4)
+                0x0000000008000510                PROVIDE (__init_array_start = .)
  *(SORT_BY_NAME(.init_array.*))
  *(.init_array*)
- .init_array    0x00000000080004d8        0x4 /usr/lib/gcc/arm-none-eabi/10.3.1/thumb/v6-m/nofp/crtbegin.o
-                0x00000000080004dc                PROVIDE (__init_array_end = .)
-                0x00000000080004dc                . = ALIGN (0x4)
+ .init_array    0x0000000008000510        0x4 /usr/lib/gcc/arm-none-eabi/10.3.1/thumb/v6-m/nofp/crtbegin.o
+                0x0000000008000514                PROVIDE (__init_array_end = .)
+                0x0000000008000514                . = ALIGN (0x4)
 
-.fini_array     0x00000000080004dc        0x4
-                0x00000000080004dc                . = ALIGN (0x4)
-                0x00000000080004dc                PROVIDE (__fini_array_start = .)
+.fini_array     0x0000000008000514        0x4
+                0x0000000008000514                . = ALIGN (0x4)
+                0x0000000008000514                PROVIDE (__fini_array_start = .)
  *(SORT_BY_NAME(.fini_array.*))
  *(.fini_array*)
- .fini_array    0x00000000080004dc        0x4 /usr/lib/gcc/arm-none-eabi/10.3.1/thumb/v6-m/nofp/crtbegin.o
-                0x00000000080004e0                PROVIDE (__fini_array_end = .)
-                0x00000000080004e0                . = ALIGN (0x4)
-                0x00000000080004e0                _sidata = LOADADDR (.data)
+ .fini_array    0x0000000008000514        0x4 /usr/lib/gcc/arm-none-eabi/10.3.1/thumb/v6-m/nofp/crtbegin.o
+                0x0000000008000518                PROVIDE (__fini_array_end = .)
+                0x0000000008000518                . = ALIGN (0x4)
+                0x0000000008000518                _sidata = LOADADDR (.data)
 
-.data           0x0000000020000000        0x0 load address 0x00000000080004e0
+.data           0x0000000020000000        0x0 load address 0x0000000008000518
                 0x0000000020000000                . = ALIGN (0x4)
                 0x0000000020000000                _sdata = .
  *(.data)
@@ -369,17 +370,17 @@ LOAD /usr/lib/gcc/arm-none-eabi/10.3.1/thumb/v6-m/nofp/crtn.o
                 0x0000000020000000                _edata = .
 
 .tm_clone_table
-                0x0000000020000000        0x0 load address 0x00000000080004e0
+                0x0000000020000000        0x0 load address 0x0000000008000518
  .tm_clone_table
                 0x0000000020000000        0x0 /usr/lib/gcc/arm-none-eabi/10.3.1/thumb/v6-m/nofp/crtbegin.o
  .tm_clone_table
                 0x0000000020000000        0x0 /usr/lib/gcc/arm-none-eabi/10.3.1/thumb/v6-m/nofp/crtend.o
 
-.igot.plt       0x0000000020000000        0x0 load address 0x00000000080004e0
+.igot.plt       0x0000000020000000        0x0 load address 0x0000000008000518
  .igot.plt      0x0000000020000000        0x0 /usr/lib/gcc/arm-none-eabi/10.3.1/thumb/v6-m/nofp/crtbegin.o
                 0x0000000020000000                . = ALIGN (0x4)
 
-.bss            0x0000000020000000       0x1c load address 0x00000000080004e0
+.bss            0x0000000020000000       0x1c load address 0x0000000008000518
                 0x0000000020000000                _sbss = .
                 0x0000000020000000                __bss_start__ = _sbss
  *(.bss)
@@ -391,7 +392,7 @@ LOAD /usr/lib/gcc/arm-none-eabi/10.3.1/thumb/v6-m/nofp/crtn.o
                 0x000000002000001c                __bss_end__ = _ebss
 
 ._user_heap_stack
-                0x000000002000001c      0x604 load address 0x00000000080004e0
+                0x000000002000001c      0x604 load address 0x0000000008000518
                 0x0000000020000020                . = ALIGN (0x8)
  *fill*         0x000000002000001c        0x4 
                 [!provide]                        PROVIDE (end = .)
@@ -482,12 +483,12 @@ LOAD /usr/lib/gcc/arm-none-eabi/10.3.1/thumb/v6-m/nofp/libgcc.a
  .debug_macro   0x0000000000000efb      0x391 build/main.o
  .debug_macro   0x000000000000128c     0x6e6e build/main.o
 
-.debug_line     0x0000000000000000      0x458
- .debug_line    0x0000000000000000      0x1e0 build/main.o
- .debug_line    0x00000000000001e0       0x85 startup_stm32f030f4px.o
- .debug_line    0x0000000000000265      0x127 /usr/lib/gcc/arm-none-eabi/10.3.1/../../../arm-none-eabi/lib/thumb/v6-m/nofp/libc_nano.a(lib_a-init.o)
- .debug_line    0x000000000000038c       0x6c /usr/lib/gcc/arm-none-eabi/10.3.1/thumb/v6-m/nofp/libgcc.a(_udivsi3.o)
- .debug_line    0x00000000000003f8       0x60 /usr/lib/gcc/arm-none-eabi/10.3.1/thumb/v6-m/nofp/libgcc.a(_dvmd_tls.o)
+.debug_line     0x0000000000000000      0x45b
+ .debug_line    0x0000000000000000      0x1e3 build/main.o
+ .debug_line    0x00000000000001e3       0x85 startup_stm32f030f4px.o
+ .debug_line    0x0000000000000268      0x127 /usr/lib/gcc/arm-none-eabi/10.3.1/../../../arm-none-eabi/lib/thumb/v6-m/nofp/libc_nano.a(lib_a-init.o)
+ .debug_line    0x000000000000038f       0x6c /usr/lib/gcc/arm-none-eabi/10.3.1/thumb/v6-m/nofp/libgcc.a(_udivsi3.o)
+ .debug_line    0x00000000000003fb       0x60 /usr/lib/gcc/arm-none-eabi/10.3.1/thumb/v6-m/nofp/libgcc.a(_dvmd_tls.o)
 
 .debug_str      0x0000000000000000    0x2b369
  .debug_str     0x0000000000000000    0x2b11d build/main.o

@@ -58,9 +58,11 @@ int main( void )
 	GPIOB->PUPDR |= ( 0x01 << (1*2)); //pb1 / up 01
 
 
+
  while( 1 )
 	{
 
+usart1_send_byte('A');
 
 
 		if (usart1_recieve_byte() == 'E')
