@@ -1,34 +1,37 @@
-SOURCE    = main
-MCPU      = cortex-m0
-STARTUP   = startup_stm32f030f4px
-LOADER    = STM32F030F4PX_FLASH.ld
-OBJCOPY = arm-none-eabi-objcopy
+TARGET    = main
+MCPU      = cortex-m4
+STARTUP   = startup_stm32f401rctx
+LOADER    = STM32F401RCTX_FLASH.ld
+OBJCOPY   = arm-none-eabi-objcopy
+CC        = arm-none-eabi-gcc
 
-CC = arm-none-eabi-gcc
+INCLUDE1  = Drivers/CMSIS/Device/ST/STM32F4xx/Include
+INCLUDE2  = Drivers/CMSIS/Include
+ST_INCL   = Core/Startup
+INC_H     = inc
 
-CFLAGS = -mcpu=$(MCPU) -g3 --specs=nano.specs -mthumb -mfloat-abi=soft -Wall
+SRC       := $(wildcard *.c)
+OBJ       := $(patsubst %.c,build/%.o,$(SRC))
 
-INCLUDE1 =/Drivers/CMSIS/Device/ST/STM32F0xx/Include
-INCLUDE2 =/Drivers/CMSIS/Include
-ST_INCL  =/Core/Startup
+CFLAGS = -mcpu=$(MCPU) -g3 --specs=nano.specs -mthumb -mfloat-abi=soft -Wall -I$(INC_H)
 
-all: build/main.hex 
+all: build/$(TARGET).hex
 
-build/$(SOURCE).elf: build/$(SOURCE).o $(STARTUP).o $(LOADER) Makefile
-	$(CC) -o $@ build/$(SOURCE).o $(STARTUP).o -mcpu=$(MCPU) --specs=nosys.specs -T"$(LOADER)" \
-	-Wl,-Map=build/$(SOURCE).map -Wl,--gc-sections -static --specs=nano.specs -mfloat-abi=soft -mthumb \
-	-Wl,--start-group -lc -lm -Wl,--end-group
-	arm-none-eabi-size build/$(SOURCE).elf
-	
-$(STARTUP).o: $(ST_INCL)/$(STARTUP).s Makefile
+build:
+	mkdir -p build
+
+build/%.o: %.c | build
+	$(CC) $(CFLAGS) -I$(INCLUDE1) -I$(INCLUDE2) -I$(INC_H) -std=gnu11 \
+	-c -O0 -ffunction-sections -fdata-sections -Wall -fstack-usage -o $@ $<
+
+$(STARTUP).o: $(ST_INCL)/$(STARTUP).s | build
 	$(CC) $(CFLAGS) -DDEBUG -c -x assembler-with-cpp -o $@ $<
 
-build/$(SOURCE).o: $(SOURCE).c Makefile
-	$(CC) $< $(CFLAGS) -I$(INCLUDE1) -I$(INCLUDE2) -std=gnu11 \
-	-c -O0 -ffunction-sections -fdata-sections -Wall -fstack-usage -o $@
+build/$(TARGET).elf: $(OBJ) $(STARTUP).o $(LOADER) Makefile
+	$(CC) -o $@ $(OBJ) $(STARTUP).o -mcpu=$(MCPU) --specs=nosys.specs -T"$(LOADER)" \
+	-Wl,-Map=build/$(TARGET).map -Wl,--gc-sections -static --specs=nano.specs -mfloat-abi=soft -mthumb \
+	-Wl,--start-group -lc -lm -Wl,--end-group
+	arm-none-eabi-size $@
 
-
-build/$(SOURCE).hex: build/$(SOURCE).elf
+build/$(TARGET).hex: build/$(TARGET).elf
 	$(OBJCOPY) -O ihex $< $@
-
-
