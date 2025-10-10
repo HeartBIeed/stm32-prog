@@ -1,6 +1,6 @@
 SOURCE    = main
 MCPU      = cortex-m3
-STARTUP   = startup_stm32f103c8tx.s
+STARTUP   = startup_stm32f103c8tx
 LOADER    = STM32F103C8TX_FLASH.ld
 OBJCOPY = arm-none-eabi-objcopy
 
