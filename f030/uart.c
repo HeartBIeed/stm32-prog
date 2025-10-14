@@ -1,9 +1,9 @@
 #include "uart.h"
 
-extern volatile uint8_t uart1_flag = 0;
+volatile uint8_t uart1_flag = 0;
 
 
-void UART_init()
+void UART_init(uint16_t speed)
 {
 	RCC->AHBENR |= RCC_AHBENR_GPIOAEN; 
 	RCC->APB2ENR |= RCC_APB2ENR_USART1EN; //APB bus
@@ -26,9 +26,11 @@ void UART_init()
 	USART1->CR3 = 0;
 
 	uint32_t fcpu = 8000000u;
-	uint32_t baud = 9600u;
+	
+	USART1->BRR = fcpu/speed; 
+	
+//	USART1->BRR = (uint16_t)((fcpu+(baud/2))/baud); 
 
-	USART1->BRR = (uint16_t)((fcpu+(baud/2))/baud); 
 	USART1->CR1 |= USART_CR1_TE | USART_CR1_RE | USART_CR1_UE; //tx rx usart enable
 
 }
@@ -41,12 +43,15 @@ void usart1_send_byte(uint8_t tx_data)
 
 uint8_t usart1_recieve_byte()
 	{
-		while ((USART1->ISR & USART_ISR_RXNE) == 0);
-	 	return (uint8_t)USART1->RDR;
-	
+//		while ((USART1->ISR & USART_ISR_RXNE) == 0);
+		if (USART1->ISR & USART_ISR_RXNE) 
+			{
+				return (uint8_t)USART1->RDR;
+			}
+
 	}
 
-uint8_t usart1_rxen_flag()
+void usart1_rxen_flag()
 	{
 
 	if (USART1->ISR & USART_ISR_RXNE)
@@ -64,11 +69,15 @@ uint8_t usart1_rxen_flag()
 
 void usart1_echo()
 	{
+		if (USART1->ISR & USART_ISR_RXNE) // поправить под флаг
+		{
 		usart1_send_byte((uint8_t)USART1->RDR);
-
+	
+		}
+	
 	}
 
-void usart1_ptr_str(uint8_t *str) // TX string
+void usart1_ptr_str(char *str) // TX string
 	{
 		while (*str) 
 		{
