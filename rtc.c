@@ -5,11 +5,10 @@ void RTC_init()
 
 	RCC->CSR |= (1<<0); // LSI on
 	while(!(RCC->CSR & (1<<1))); // wait si ready
+	
 	RCC->APB1ENR |= (1<<28); // pwr en
-
 	//Power control registers
 	PWR->CR |=(1<<8); // DBP: Disable RTC domain write protection.
-
 
 	//RTC domain control register (RCC_BDCR)
 	RCC->BDCR |= (2<<8); // LSI oscillator
@@ -19,6 +18,8 @@ void RTC_init()
 	//11: HSE oscillator clock divided by 32 used as RTC clock
 
 	RCC->BDCR |= (1<<15); // RTC clock enable
+
+// *********************** BEGIN SET RTC ************************
 
 	RTC->WPR = 0xCA; //Write access for RTC registers
 	RTC->WPR = 0x53;  
@@ -34,6 +35,7 @@ void RTC_init()
 	RTC->ISR &= ~RTC_ISR_INIT; // Disable init phase 
 	RTC->WPR = 0xFE; 
 	RTC->WPR = 0x64; // Disable write access for RTC registers 
+// *********************** END SET RTC **************************
 
 	}
 
@@ -61,13 +63,47 @@ void RTC_set_time(uint8_t h,uint8_t m)
 
 	}
 
-void RTC_get_time(uint8_t *hour,uint8_t *min)
+
+void RTC_get_time(uint8_t *hour,uint8_t *min,uint8_t *sec)
 {
 
 	uint32_t tr = RTC->TR;
 
 	*hour = ((tr>>20)&0x3)*10 + ((tr>>16)&0xF); // 0x3 read 2 bits
 	*min =  ((tr>>12)&0x7)*10 + ((tr>>8)&0xF); // 0x7 read 3 bits
-// 0xF read 4 bits
+	*sec =  ((tr>>4)&0x7)*10 + ((tr>>0)&0xF); // 0x7 read 3 bits
+											// 0xF read 4 bits
 
 }
+
+
+
+void RTC_alarm_sec()
+{
+
+EXTI->IMR |= EXTI_IMR_MR17; // Разрешим прерывание 17 линиии EXTI
+EXTI->RTSR |= EXTI_RTSR_TR17; // Прерывание по восходящему фронту
+
+// *********************** BEGIN SET RTC ************************
+
+	RTC->WPR = 0xCA; 
+	RTC->WPR = 0x53;  
+
+	RTC->CR &=~ RTC_CR_ALRAE; 
+	while (!(RTC->ISR & RTC_ISR_ALRAWF)); 
+
+RTC->ALRMAR |= RTC_ALRMAR_MSK1 | RTC_ALRMAR_MSK2 | RTC_ALRMAR_MSK3 | RTC_ALRMAR_MSK4;
+	            
+	RTC->CR = RTC_CR_ALRAIE | RTC_CR_ALRAE; 
+
+	RTC->WPR = 0xFE; 
+	RTC->WPR = 0x64; 
+// *********************** END SET RTC **************************
+
+NVIC_SetPriority(RTC_IRQn,1);
+NVIC_EnableIRQ(RTC_IRQn);
+
+
+
+}
+

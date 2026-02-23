@@ -1,72 +1,60 @@
 #include "main.h"
 
-void GPIO()
+
+uint8_t hour;
+uint8_t min;
+uint8_t sec;
+char data_ds[32];
+
+
+void RTC_IRQHandler()
 {
-	RCC->AHBENR |= RCC_AHBENR_GPIOAEN; 
-	RCC->AHBENR |= RCC_AHBENR_GPIOBEN; 
 
-	GPIOA->MODER |= ( 0x01 << (5*2)); // 5 pin/ 01
-// PA output 0x10
+if(RTC->ISR & (RTC_ISR_ALRAF)) // ALRAF - flag
+	{
 
-	GPIOB->MODER &= ~( 3 << (1*2));// 1 pin
-	GPIOB->PUPDR |= ( 1 << (1*2)); //1 pin / up 01
-// PB input 0x00
+	RTC->ISR &= ~(RTC_ISR_ALRAF); // ALRAF clear flag 
+	EXTI->PR = (1<<17); //17 линия внешних прерываний RTC WUT 1 = ОЧИСТИТЬ pending bit!
 
-	GPIOB->MODER |= ( 0x01 << (6*2)); // 5 pin/ 01
-	GPIOB->MODER |= ( 0x01 << (7*2)); // 5 pin/ 01
+	RTC_get_time(&hour,&min,&sec);
+	sprintf(data_ds,"Time: %02u:%02u:%02u \n\r",hour,min,sec); // %02 /0- дополнить нулем /2 ширина
+	usart1_send_str(data_ds);
 
+	}
 }
+
 
 
 int main(void)
 {
 
-	SystemClock_HSI_8MHz();
+	SystemClock_HSE_8MHz();
 	SysTick_init();
 
-	I2C_init();
 	UART_init(9600);
-//	DMA_init();
-	GPIO();
 //	ds18_init();
-	RTC_init();
+//	I2C_init();
+//	DMA_init();
+
+    RCC->APB2ENR |= RCC_APB2ENR_SYSCFGEN;  
 
 	usart1_send_str("UART EN");
 
-char data_ds[32];
-//uint8_t string[] = "dma string \n\r";
-uint8_t hour;
-uint8_t min;
-RTC_set_time(17,06);
+
+	RTC_init();
+	RTC_set_time(13,58);
+	RTC_alarm_sec();
 
  while( 1 )
 	{
 
-
-	RTC_get_time(&hour,&min);
-	sprintf(data_ds,"Time: %02u:%02u \n\r",hour,min); // %02 /0- дополнить нулем /2 ширина
-	usart1_send_str(data_ds);
-		_delay_ms(900);
-
+		RTC_get_time(&hour,&min,&sec);
+		sprintf(data_ds,"Time: %02u:%02u:%02u \n\r",hour,min,sec); // %02 /0- дополнить нулем /2 ширина
+		usart1_send_str(data_ds);
+			_delay_ms(500);
 
 
-//dma_uart1_tx(string, strlen((char*)string));
-//	_delay_ms(500);
-/*
-	AHT_to_uart();
-	_delay_ms(500);
 
-
-	sprintf(data_ds,"SRCH = %u \n\r",ds18_search());
-	usart1_send_str(data_ds);
-		_delay_ms(10);
-
-	sprintf(data_ds,"DS = %u \n\r",ds18_get() /16 );
-	usart1_send_str(data_ds);
-		_delay_ms(500);
-*/
-
-//	echo();
 
 	}
 }
