@@ -143,11 +143,18 @@ int I2C_check_address(int addr)
 void I2C_scan()
 	{
 	int addr;
+	char data[32];
 
-	for (addr = 0x08; addr < 0x77; addr++)
+	for (addr = 0x08; addr < 0x78; addr++)
 		{
-			if (I2C_check_address(addr)) usart1_send_str("GET \n\r");
+			if (I2C_check_address(addr)) 
+			{
+				sprintf(data,"I2C get: 0x%02X \r\n",addr); 
+				usart1_send_str(data);
+			} else {
 
+				usart1_send_str("I2C none device \n\r");
+			}
 		}
 
 	}
