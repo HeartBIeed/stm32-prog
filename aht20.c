@@ -1,5 +1,6 @@
 #include "aht20.h"
 
+
 void AHT_to_uart()		
 {
 	uint8_t init_aht20[3] = {0xBE,0x08,0x00};
