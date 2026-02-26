@@ -8,14 +8,14 @@
 
 #include "main.h"
 
-void UART_init(uint16_t speed);
-void usart1_send_byte(char tx_data); // отправка байта
-void usart1_send_str(char *str); // отправка строки - принимаем строковый массив
+void USART1_init(uint16_t baud);
+void USART1_sendByte(char tx_data); // отправка байта
+void USART1_sendStr(char *str); // отправка строки - принимаем строковый массив
 void USART1_IRQHandler(); // обработчик прерывания
-void echo();
+void USART1_echo();
 
-extern volatile uint8_t data_buffer[32]; //буффер uart
-extern volatile uint8_t index_buffer;
+extern volatile uint8_t usart_data_buffer[32]; //буффер uart
+extern volatile uint8_t usart_index_buffer;
 extern volatile uint8_t usart1_flag;
 
 #endif /* UART_H_ */

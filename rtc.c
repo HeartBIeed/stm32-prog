@@ -40,7 +40,7 @@ void RTC_init()
 	}
 
 
-void RTC_set_time(uint8_t h,uint8_t m)
+void RTC_setTime(uint8_t h,uint8_t m)
 	{
 
 	RTC->WPR = 0xCA; 
@@ -64,7 +64,7 @@ void RTC_set_time(uint8_t h,uint8_t m)
 	}
 
 
-void RTC_get_time(uint8_t *hour,uint8_t *min,uint8_t *sec)
+void RTC_getTime(uint8_t *hour,uint8_t *min,uint8_t *sec)
 {
 
 	uint32_t tr = RTC->TR;
@@ -78,7 +78,7 @@ void RTC_get_time(uint8_t *hour,uint8_t *min,uint8_t *sec)
 
 
 
-void RTC_alarm_sec()
+void RTC_alarmSec()
 {
 
 EXTI->IMR |= EXTI_IMR_MR17; // Разрешим прерывание 17 линиии EXTI
@@ -102,8 +102,6 @@ RTC->ALRMAR |= RTC_ALRMAR_MSK1 | RTC_ALRMAR_MSK2 | RTC_ALRMAR_MSK3 | RTC_ALRMAR_
 
 NVIC_SetPriority(RTC_IRQn,1);
 NVIC_EnableIRQ(RTC_IRQn);
-
-
 
 }
 

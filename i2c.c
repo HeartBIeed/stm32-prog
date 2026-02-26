@@ -2,9 +2,7 @@
 
 uint32_t timeout;
 
-void I2C_init( )
-{
-
+void I2C_init(){
 // PB6 - SCL
 // PB7 - SDA
 
@@ -21,9 +19,6 @@ void I2C_init( )
 //OTYPER 1- Open Drain  - 1 bit 
 	GPIOB->OTYPER |= ((1<<PB6 )|(1<<PB7 )); 
 
-//pullup	
-//	GPIOB->PUPDR  &= ~((0x3 << (PB6*2)) | (0x3 << (PB7*2)));// no 
-
 //OSPEEDR 10 high 2 - bit
 	GPIOB->OSPEEDR |= ((0x2<<(PB6 *2))|(0x2<<(PB7 *2))); 
 
@@ -31,10 +26,8 @@ void I2C_init( )
 	GPIOB->AFR[0] |= ((0x1<<(PB6 *4))|(0x1<<(PB7 *4)));  //0b001/ 4 bit 
 //AFR 0b001 I2C enable mode
 
-
 	I2C1->CR1 = 0;
 	I2C1->CR2 = 0;
-
 //	I2C1->CR1 |= (1<<2); // RX interrupt enable
 //	I2C1->CR1 |= (1<<1); // TX interrupt enable
 	
@@ -44,37 +37,32 @@ void I2C_init( )
 //setup for fcpu 8MHz / i2c clk 100 kHz
 
 	I2C1->CR1 |= (1<<0); // PE
-
-
 }
 
 
-void I2C_write_byte(int addr,uint8_t* data,int nbytes)
-	{
+void I2C_writeByte(int addr,uint8_t* data,int nbytes){
 
-		I2C1->CR2 = 0; 
-		
-		I2C1->CR2 |= (nbytes<< 16); //nbytes
-		I2C1->CR2 |= (1 << 25); //autoend
-		I2C1->CR2 |= (addr << 1); // set slave address
-		I2C1->CR2 |= (1 << 13); //start 
+	I2C1->CR2 = 0; 
+	
+	I2C1->CR2 |= (nbytes<< 16); //nbytes
+	I2C1->CR2 |= (1 << 25); //autoend
+	I2C1->CR2 |= (addr << 1); // set slave address
+	I2C1->CR2 |= (1 << 13); //start 
 
-		while (!(I2C1->ISR & I2C_ISR_TXIS)); //txis 1 - txdr empty
+	while (!(I2C1->ISR & I2C_ISR_TXIS)); //txis 1 - txdr empty
 
 		for (int i = 0; i < nbytes; ++i)
-			{
-				while (!(I2C1->ISR & I2C_ISR_TXIS)); //wait empty tx buffer
-				I2C1->TXDR = data[i];// send 
+		{
+			while (!(I2C1->ISR & I2C_ISR_TXIS)); //wait empty tx buffer
+			I2C1->TXDR = data[i];// send 
 
-			}
+		}
 
 	while (!(I2C1->ISR & I2C_ISR_STOPF)); //wait stop
 	I2C1->ICR = I2C_ICR_STOPCF; //clear 
+}
 
-	}
-
-void I2C_read_byte(int addr,uint8_t* data,int len)
-	{
+void I2C_readByte(int addr,uint8_t* data,int len){
 
 		I2C1->CR2 = 0; 
 		
@@ -93,17 +81,9 @@ void I2C_read_byte(int addr,uint8_t* data,int len)
 			
 	while (!(I2C1->ISR & I2C_ISR_STOPF)); //wait stop
 	I2C1->ICR = I2C_ICR_STOPCF; //clear 
+}
 
-	}
-
-
-
-
-
-
-int I2C_check_address(int addr)
-	{
-
+int I2C_checkAddress(int addr){
 	//clear errors
 	I2C1->ICR = (1<<4)|(1<<5)|(1<<8)|(1<<9);
 
@@ -115,6 +95,7 @@ int I2C_check_address(int addr)
 			I2C1->CR2 |= (1 << 13); //start 
 
 	timeout = TIMEOUT;
+
 	while (!(I2C1->ISR & (I2C_ISR_NACKF | I2C_ISR_STOPF | I2C_ISR_TC))) //wait NACK STOPF TC
 		{
 			if (--timeout == 0) return 0; //none ack
@@ -122,9 +103,8 @@ int I2C_check_address(int addr)
 
 	if (I2C1->ISR & I2C_ISR_NACKF) // if nack
 		{
-		        I2C1->ICR = I2C_ICR_NACKCF | I2C_ICR_STOPCF; //clear flags
-		        return 0; // no device
-
+		   I2C1->ICR = I2C_ICR_NACKCF | I2C_ICR_STOPCF; //clear flags
+		   return 0; // no device
 		}
 
 
@@ -136,25 +116,22 @@ int I2C_check_address(int addr)
 
 	I2C1->ICR = I2C_ICR_STOPCF; //clear stopf
 	return 1; 
+}
 
-	}
 
+void I2C_scan(){
 
-void I2C_scan()
-	{
 	int addr;
 	char data[32];
 
 	for (addr = 0x08; addr < 0x78; addr++)
+	{
+		if (I2C_checkAddress(addr)) 
 		{
-			if (I2C_check_address(addr)) 
-			{
-				sprintf(data,"I2C get: 0x%02X \r\n",addr); 
-				usart1_send_str(data);
-			} else {
-
-				usart1_send_str("I2C none device \n\r");
-			}
+			sprintf(data,"I2C get: 0x%02X \r\n",addr); 
+			USART1_sendStr(data);
+		} else {
+			USART1_sendStr("I2C none device \n\r");
 		}
-
 	}
+}

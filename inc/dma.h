@@ -9,8 +9,7 @@
 #include "main.h"
 
 void DMA_init();
-void dma_uart1_tx(uint8_t *data, uint16_t len);
-void dma_uart1_rx(uint32_t len);
-
+void DMA_uart1_Tx(uint8_t *data, uint16_t len);
+void DMA_uart1_Rx(uint32_t len);
 
 #endif /* DMA_H_ */

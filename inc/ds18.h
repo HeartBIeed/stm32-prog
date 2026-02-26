@@ -8,17 +8,11 @@
 
 #include "main.h"
 
-
-
-
 #define PA0_INPUT 	(GPIOA->MODER &= ~(0x03)) // PA0 input 
 #define PA0_OUTPUT 	(GPIOA->MODER = (GPIOA->MODER & ~(0x03))| 0x01) // PA0 output 
 
-void ds18_init();
-uint8_t ds18_search();
-uint8_t ds18_read();
-void ds18_send(uint8_t data);
-int16_t ds18_get();
+void DS18_init();
+int16_t DS18_getData();
 
 
 #endif /* DS18_H_ */

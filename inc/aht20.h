@@ -4,7 +4,7 @@
 #include "main.h"
 
 
-void AHT_to_uart();		
+void AHT_to_USART();		
 
 
 #endif /* AHT20_H_ */

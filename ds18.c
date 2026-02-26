@@ -1,21 +1,19 @@
 #include "ds18.h"
 
 
-void ds18_init()
-	{
+void DS18_init(){
 		RCC->AHBENR |= RCC_AHBENR_GPIOAEN; 
 
 		GPIOA->OTYPER |= (1<<0); // PA0 open drain
 		GPIOA->OSPEEDR |= (3<<0); // PA0 high speed 
 
-	}
+}
 
 // Задержки подогнанны на лог анализаторе
 // NOP и Delay мкс нужно отладить под чатоту микроконтроллера
 // согласно комментариям напротив задержек
 
-uint8_t ds18_search()
-	{
+uint8_t DS18_search(){
 
 	uint8_t dt_result;
 	uint8_t presence;
@@ -56,19 +54,19 @@ uint8_t ds18_search()
 	return dt_result; 
 	// результат - 1 отработка датчика
 	// при постоянном прижатии или отпуске - 0
-	}
+}
 
 
 
-void ds18_send(uint8_t data)
-	{
+void DS18_writeByte(uint8_t data){
+
 	PA0_OUTPUT;
 
 	for(uint8_t i=0; i<8; i++)
-		{
+	{
 
 		if (data & (1<<i))
-			{
+		{
 
 			PA0_OUTPUT;
 			CLEAR_BIT(GPIOA->ODR, 1<<0);
@@ -77,31 +75,26 @@ void ds18_send(uint8_t data)
 
 			PA0_INPUT; //подняли линию - отправился 1 
 				_delay_us(40); // 50 мкс
-			} 
-
-		else
-			{
+		} else {
 			
 			PA0_OUTPUT;
-				CLEAR_BIT(GPIOA->ODR, 1<<0); // прижали шину к 0 и держим
+			CLEAR_BIT(GPIOA->ODR, 1<<0); // прижали шину к 0 и держим
 
 				_delay_us(50); // 60 мкс
 			PA0_INPUT; // отпустили шину
 
-			}
-
 		}
-
 	}
+}
 
 
-uint8_t ds18_read()
-	{
-		uint8_t data =0;
-		PA0_INPUT;
+uint8_t DS18_readByte(){
+
+	uint8_t data =0;
+	PA0_INPUT;
 
 		for(uint8_t i=0; i<8; i++)
-			{
+		{
 
 			PA0_OUTPUT; 
 			CLEAR_BIT(GPIOA->ODR, 1<<0); 
@@ -112,49 +105,42 @@ uint8_t ds18_read()
 				_delay_us(10); // 20 мкс
 
 			if (READ_BIT(GPIOA->IDR ,1<<0)==1) 
-				{	
-					data |= 1<<i; // пишем 1 бит по индексу цикла
-					_delay_us(25); // 40 мкс
+			{	
+				data |= 1<<i; // пишем 1 бит по индексу цикла
+				_delay_us(25); // 40 мкс
 
-				} else {
+			} else {
 
-					_delay_us(40); // 60 мкс
-
-				}
-
+				_delay_us(40); // 60 мкс
 			}
-				
+		}
 		return data;
-	}
+}
 
-int16_t ds18_get()
-	{
+int16_t DS18_getData(){
 
 	int16_t temp;
 	uint8_t LS_bit;
 	uint8_t MS_bit;
 
-		if (ds18_search()) // сброс перед отправкой + проверка датчика
+		if (DS18_search()) // сброс перед отправкой + проверка датчика
 		{
-			ds18_send(0xCC); //SKIP ROM
-			ds18_send(0x44); // CONVERT T
+			DS18_writeByte(0xCC); //SKIP ROM
+			DS18_writeByte(0x44); // CONVERT T
 				_delay_ms(750); // задержка на замер температуры
 
-			ds18_search(); // сброс перед отправкой 
-			ds18_send(0xCC); //SKIP ROM
-			ds18_send(0xBE); //READ SCRATCHPAD
+			DS18_search(); // сброс перед отправкой 
+			DS18_writeByte(0xCC); //SKIP ROM
+			DS18_writeByte(0xBE); //READ SCRATCHPAD
 
-			LS_bit = ds18_read();
-			MS_bit = ds18_read();
+			LS_bit = DS18_readByte();
+			MS_bit = DS18_readByte();
 
 			temp = (MS_bit <<8) | LS_bit;
 
+		} else {
+			temp = 0;
 		}
-		else
-		{
-				temp = 0;
-		}
-
 	return temp;
-	}
+}
 

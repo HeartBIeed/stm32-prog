@@ -9,9 +9,9 @@
 #include "main.h"
 
 void I2C_init( );
-int I2C_check_address(int addr);
-void I2C_read_byte(int addr,uint8_t* data,int len);
-void I2C_write_byte(int addr,uint8_t* data,int nbytes);
+int I2C_checkAddress(int addr);
+void I2C_readByte(int addr,uint8_t* data,int len);
+void I2C_writeByte(int addr,uint8_t* data,int nbytes);
 void I2C_scan();
 
 #define TIMEOUT 1000

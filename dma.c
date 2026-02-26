@@ -1,16 +1,15 @@
 #include "dma.h"
-void DMA_init()
-	{
+
+void DMA_init(){
+
 	RCC ->AHBENR |= RCC_AHBENR_DMA1EN;
-	}
+}
 
 uint32_t rx_buffer[64];
 
+void DMA_uart1_Tx(uint8_t *data, uint16_t len){
 // TX - Channel 2 / 4
-
-void dma_uart1_tx(uint8_t *data, uint16_t len)
-	{
-
+	
 	CLEAR_BIT(DMA1_Channel2->CCR, 1<<0); // off channel 
 
 	DMA1_Channel2->CMAR = (uint32_t) data; // source data from memory
@@ -26,13 +25,12 @@ void dma_uart1_tx(uint8_t *data, uint16_t len)
 	SET_BIT(DMA1_Channel2->CCR, 1<<0); // on channel 
 
 	USART1->CR3 |= USART_CR3_DMAT;	// tx dma en
+}
 
-	}
 
+void DMA_uart1_Rx(uint32_t len){
 // RX - Channel 3 / 5
 
-void dma_uart1_rx(uint32_t len)
-	{
 	CLEAR_BIT(DMA1_Channel3->CCR, 1<<0); // off channel 
 
 	DMA1_Channel3->CPAR = (uint32_t)&USART1->RDR; // adress perif
@@ -47,6 +45,6 @@ void dma_uart1_rx(uint32_t len)
 	SET_BIT(DMA1_Channel3->CCR, 1<<0); // on channel 
 
 	USART1->CR3 |= USART_CR3_DMAR;	// rx dma en
-	}
+}
 
 

@@ -1,10 +1,10 @@
 #include "uart.h"
 
-volatile uint8_t data_buffer[32]; //буффер uart
-volatile uint8_t index_buffer =0;
+volatile uint8_t usart_data_buffer[32]; //буффер uart
+volatile uint8_t usart_index_buffer =0;
 volatile uint8_t usart1_flag =0;
 
-void UART_init(uint16_t baud)
+void USART1_init(uint16_t baud)
 	{
 		RCC->AHBENR |= RCC_AHBENR_GPIOAEN; 
 		RCC->APB2ENR |= RCC_APB2ENR_USART1EN; //APB bus
@@ -35,7 +35,7 @@ void UART_init(uint16_t baud)
 	}
 
 
-void usart1_send_byte(char tx_data) // отправка байта
+void USART1_sendByte(char tx_data) // отправка байта
 	{
 		while ((USART1->ISR & USART_ISR_TXE) == 0); // пока флаг пустого буффера не появится
 	 	USART1->TDR = tx_data; 
@@ -43,9 +43,9 @@ void usart1_send_byte(char tx_data) // отправка байта
 
 
 
-void usart1_send_str(char *str) // отправка строки - принимаем строковый массив
+void USART1_sendStr(char *str) // отправка строки - принимаем строковый массив
 	{
-		while (*str) usart1_send_byte(*str++); // отправка до \0
+		while (*str) USART1_sendByte(*str++); // отправка до \0
 	}
 
 
@@ -59,16 +59,16 @@ void USART1_IRQHandler() // обработчик прерывания
 		char data_rx = USART1->RDR;
 		usart1_flag =1; // поставим флаг
 
-		if (data_rx == '\r' || index_buffer >= sizeof(data_buffer)-1) //если конец строки или переполнение
+		if (data_rx == '\r' || usart_index_buffer >= sizeof(usart_data_buffer)-1) //если конец строки или переполнение
 			{
-				data_buffer[index_buffer] = '\0'; //вставляем 0-терминатор
-				index_buffer = 0;
+				usart_data_buffer[usart_index_buffer] = '\0'; //вставляем 0-терминатор
+				usart_index_buffer = 0;
 			}		
 				
 		else	
 			{
-				data_buffer[index_buffer] = data_rx;
-				index_buffer++;
+				usart_data_buffer[usart_index_buffer] = data_rx;
+				usart_index_buffer++;
 			}
 			
 		}
@@ -77,13 +77,13 @@ void USART1_IRQHandler() // обработчик прерывания
 	}	
 
 
-void echo()
+void USART1_echo()
 	{
 	if (usart1_flag)
 		{
-		usart1_send_str("GET: ");
-		usart1_send_str((char*)data_buffer);
-		usart1_send_str("\r\n");
+		USART1_sendStr("GET: ");
+		USART1_sendStr((char*)usart_data_buffer);
+		USART1_sendStr("\r\n");
 		usart1_flag = 0;
 		}	
 

@@ -18,8 +18,9 @@
 #include "ds18.h"
 #include "i2c.h"
 #include "aht20.h"
-//#include "dma.h"
+#include "dma.h"
 #include "rtc.h"
+#include "pwm.h"
 
 
 #endif /* MAIN_H_ */

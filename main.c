@@ -4,82 +4,94 @@
 uint8_t hour;
 uint8_t min;
 uint8_t sec;
-char data_ds[32];
+char string[32];
 
 
-void RTC_IRQHandler()
-{
+void RTC_IRQHandler(){
 
-if(RTC->ISR & (RTC_ISR_ALRAF)) // ALRAF - flag
+	if(RTC->ISR & (RTC_ISR_ALRAF)) // ALRAF - flag
 	{
 
-	RTC->ISR &= ~(RTC_ISR_ALRAF); // ALRAF clear flag 
-	EXTI->PR = (1<<17); //17 линия внешних прерываний RTC WUT 1 = ОЧИСТИТЬ pending bit!
+		RTC->ISR &= ~(RTC_ISR_ALRAF); // ALRAF clear flag 
+		EXTI->PR = (1<<17); //17 линия внешних прерываний RTC WUT 1 = ОЧИСТИТЬ pending bit!
 
-	RTC_get_time(&hour,&min,&sec);
-	sprintf(data_ds,"Time: %02u:%02u:%02u \n\r",hour,min,sec); // %02 /0- дополнить нулем /2 ширина
-	usart1_send_str(data_ds);
+		RTC_getTime(&hour,&min,&sec);
+		sprintf(string,"Time: %02u:%02u:%02u \n\r",hour,min,sec); // %02 /0- дополнить нулем /2 ширина
+		USART1_sendStr(string);
 
 	}
 }
 
+int USART_commands(){
+
+	if (strncmp((char*)usart_data_buffer,"pwm",3) == 0) 
+	{
+
+		char *command = strtok((char*)usart_data_buffer," ");
+		char *duty_char = strtok(NULL, ",");
+		int duty = atoi(duty_char);
+
+		PWM_init(duty);
+
+		char string[32];
+		sprintf(string, "PWM DUTY -> %2d \r\n", duty);
+		USART1_sendStr(string);
+	 	usart_data_buffer[0] = '\0';
+
+	 		return 1;
+
+	} else {
+			return 0;
+	}
+		
+}
 
 
-int main(void)
-{
+int main(void){
 
 	SystemClock_HSE_8MHz();
 	SysTick_init();
 
-	UART_init(9600);
-
-
-	//DMA_init();
-//	GPIO();
-	ds18_init();
+	USART1_init(9600);
+	PWM_init(50);
+    DMA_init();
+	DS18_init();
 	RTC_init();
+	I2C_init();
+	
+	USART1_sendStr("UART EN");
 
-	usart1_send_str("UART EN");
+	RTC_setTime(16,00);
 
-char data_ds[32];
-//uint8_t string[] = "dma string \n\r";
+ while(1) {
 
-uint8_t hour;
-uint8_t min;
-RTC_set_time(21,30);
+	USART_commands();
 
- while( 1 )
-	{
-
-
-
-	RTC_get_time(&hour,&min);
-	sprintf(data_ds,"Time: %02u:%02u \n\r",hour,min); // %02 /0- дополнить нулем /2 ширина
-	usart1_send_str(data_ds);
-
-
-
-//dma_uart1_tx(string, strlen((char*)string));
-//	_delay_ms(500);
-
-
-
-	sprintf(data_ds,"SRCH = %u \n\r",ds18_search());
-	usart1_send_str(data_ds);
-
-	sprintf(data_ds,"DS = %u \n\r",ds18_get() /16 );
-	usart1_send_str(data_ds);
-
-	AHT_to_uart();
+	RTC_getTime(&hour,&min,&sec);
+	sprintf(string,"Time: %02u:%02u:%02u  \n\r",hour,min,sec); 
+	USART1_sendStr(string);
 
 		_delay_ms(1000);
 
-/*	//	I2C_scan();
 
-	_delay_ms(500);
+//DMA_uart1_Tx(string, strlen((char*)string));
+//		_delay_ms(500);
+
+/*
+
+	sprintf(string,"SRCH = %u \n\r",DS18_search());
+	USART1_sendStr(string);
+
+	sprintf(string,"DS = %u \n\r",DS18_getData() /16 );
+	USART1_sendStr(string);
+
+	AHT_to_USART();
+
+		_delay_ms(1000);
+
+
 */
-//	echo();
-
+	USART1_echo();
 
 	}
 }
