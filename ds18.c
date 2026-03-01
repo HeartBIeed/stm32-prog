@@ -117,30 +117,35 @@ uint8_t DS18_readByte(){
 		return data;
 }
 
-int16_t DS18_getData(){
-
-	int16_t temp;
-	uint8_t LS_bit;
-	uint8_t MS_bit;
-
+uint8_t DS18_startMeasure(){
 		if (DS18_search()) // сброс перед отправкой + проверка датчика
 		{
 			DS18_writeByte(0xCC); //SKIP ROM
 			DS18_writeByte(0x44); // CONVERT T
-				_delay_ms(750); // задержка на замер температуры
-
-			DS18_search(); // сброс перед отправкой 
-			DS18_writeByte(0xCC); //SKIP ROM
-			DS18_writeByte(0xBE); //READ SCRATCHPAD
-
-			LS_bit = DS18_readByte();
-			MS_bit = DS18_readByte();
-
-			temp = (MS_bit <<8) | LS_bit;
-
 		} else {
-			temp = 0;
+		return 0;
 		}
+}		
+
+int16_t DS18_getData(){
+
+	int16_t temp;
+	uint8_t LS_bit;
+	uint8_t MS_bit;	
+
+	if (DS18_search())
+	{
+	DS18_writeByte(0xCC); //SKIP ROM
+	DS18_writeByte(0xBE); //READ SCRATCHPAD
+
+	LS_bit = DS18_readByte();
+	MS_bit = DS18_readByte();
+
+		temp = (MS_bit <<8) | LS_bit;
+	} else {
+		temp = 0;
+	}
+
 	return temp;
 }
 

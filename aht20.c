@@ -5,7 +5,7 @@ void AHT_to_USART(){
 	uint8_t init_aht20[3] = {0xBE,0x08,0x00};
 	uint8_t trig[3] = {0xAC, 0x33, 0x00};
 	uint8_t buffer[6];
-	char string[32];
+	char string[41];
 
 
 	if (I2C_checkAddress(0x38))
@@ -29,10 +29,10 @@ void AHT_to_USART(){
 	uint32_t Humi = raw_H * 100 / 1048576; //1048576 = 2^20
 	uint32_t Temp = raw_T * 200 / 1048576 - 50;
 
-	sprintf(string,"H = %lu \n\r",Humi);
+	sprintf(string,"\033[1;35m H = %lu \033[0m\n\r",Humi);
 	USART1_sendStr(string);
 
-	sprintf(string,"T = %lu \n\r",Temp);
+	sprintf(string,"\033[1;36m T = %lu \033[0m\n\r",Temp);
 	USART1_sendStr(string);
 
 	string[0] = '\0';

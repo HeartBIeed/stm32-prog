@@ -12,7 +12,8 @@
 #define PA0_OUTPUT 	(GPIOA->MODER = (GPIOA->MODER & ~(0x03))| 0x01) // PA0 output 
 
 void DS18_init();
+uint8_t DS18_search();
+uint8_t DS18_startMeasure();
 int16_t DS18_getData();
-
 
 #endif /* DS18_H_ */

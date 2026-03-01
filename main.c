@@ -4,7 +4,7 @@
 uint8_t hour;
 uint8_t min;
 uint8_t sec;
-char string[32];
+char string[41];
 
 /*
 void RTC_IRQHandler(){
@@ -76,15 +76,15 @@ int USART_commands(){
 
 int main(void){
 
-	SystemClock_HSE_8MHz();
+	SystemClock_HSI_8MHz();
 	SysTick_init();
 
 	USART1_init(9600);
 //	PWM_init(50);
-//    DMA_init();
-//	DS18_init();
+//  DMA_init();
+	DS18_init();
 //	RTC_init();
-//	I2C_init();
+	I2C_init();
 	
 	USART1_sendStr("UART EN");
 
@@ -92,9 +92,33 @@ int main(void){
 DS1302_Init();
 //DS1302_setTtime(15,05);
 
+
+uint32_t start[3] = {0}; // нулевые стартовые значения 
+						 // для неблокирующих задержек
+
  while(1) {
 
 	USART_commands();
+
+	if (ms_ticks - start[0] >= 1000)
+	{
+		DS1302_getTtime(&hour,&min,&sec);
+		sprintf(string,"\n\r\033[0;32m DS1302 Time: %02u:%02u:%02u  \033[0m\n\r",hour,min,sec); 
+		USART1_sendStr(string);	 
+
+		sprintf(string,"\033[1;33m DS = %u \033[0m\n\r",DS18_getData() /16 );
+		USART1_sendStr(string);	
+
+		AHT_to_USART();		
+		DS18_startMeasure();
+
+		start[0] = ms_ticks;
+	}
+		
+	USART1_echo();
+
+	}
+}
 
 //	RTC_getTime(&hour,&min,&sec);
 //	sprintf(string,"Time: %02u:%02u:%02u  \n\r",hour,min,sec); 
@@ -102,34 +126,5 @@ DS1302_Init();
 
 //		_delay_ms(1000);
 
-
 //DMA_uart1_Tx(string, strlen((char*)string));
 //		_delay_ms(500);
-
-/*
-
-	sprintf(string,"SRCH = %u \n\r",DS18_search());
-	USART1_sendStr(string);
-
-	sprintf(string,"DS = %u \n\r",DS18_getData() /16 );
-	USART1_sendStr(string);
-
-	AHT_to_USART();
-
-		_delay_ms(1000);
-
-
-*/
-
-DS1302_getTtime(&hour,&min,&sec);
-sprintf(string,"DS1302 Time: %02u:%02u:%02u  \n\r",hour,min,sec); 
-USART1_sendStr(string);
-		_delay_ms(1000);
-
-
-
-	USART1_echo();
-
-	}
-}
-

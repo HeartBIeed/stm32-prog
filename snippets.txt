@@ -50,4 +50,14 @@ READ_BIT(GPIOA->IDR ,1<<0)==1)
 
 
 
+*******************************************
+uint8_t start[3] = {0};
+
+if (ms_ticks - start[0] >= 1000)
+{
+
+
+start[0] = ms_ticks;
+}
+		
 
