@@ -103,10 +103,10 @@ uint32_t start[3] = {0}; // нулевые стартовые значения
 	if (ms_ticks - start[0] >= 1000)
 	{
 		DS1302_getTtime(&hour,&min,&sec);
-		sprintf(string,"\n\r\033[0;32m DS1302 Time: %02u:%02u:%02u  \033[0m\n\r",hour,min,sec); 
+		sprintf(string,"DS1302_Time: %02u,%02u,%02u\n\r",hour,min,sec); 
 		USART1_sendStr(string);	 
 
-		sprintf(string,"\033[1;33m DS = %u \033[0m\n\r",DS18_getData() /16 );
+		sprintf(string,"DS:%u \n\r",DS18_getData() /16 );
 		USART1_sendStr(string);	
 
 		AHT_to_USART();		
@@ -120,11 +120,3 @@ uint32_t start[3] = {0}; // нулевые стартовые значения
 	}
 }
 
-//	RTC_getTime(&hour,&min,&sec);
-//	sprintf(string,"Time: %02u:%02u:%02u  \n\r",hour,min,sec); 
-//	USART1_sendStr(string);
-
-//		_delay_ms(1000);
-
-//DMA_uart1_Tx(string, strlen((char*)string));
-//		_delay_ms(500);

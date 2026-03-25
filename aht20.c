@@ -29,10 +29,10 @@ void AHT_to_USART(){
 	uint32_t Humi = raw_H * 100 / 1048576; //1048576 = 2^20
 	uint32_t Temp = raw_T * 200 / 1048576 - 50;
 
-	sprintf(string,"\033[1;35m H = %lu \033[0m\n\r",Humi);
+	sprintf(string,"AHT20_H: %lu\n\r",Humi);
 	USART1_sendStr(string);
 
-	sprintf(string,"\033[1;36m T = %lu \033[0m\n\r",Temp);
+	sprintf(string,"AHT20_T: %lu\n\r",Temp);
 	USART1_sendStr(string);
 
 	string[0] = '\0';
