@@ -46,60 +46,68 @@ int USART_commands(){
 		
 }
 */
-
-int USART_commands(){
+/*
+uint8_t USART_commands(){
 
 	if (strncmp((char*)usart_data_buffer,"st",2) == 0) 
 	{
 
-		char *command = strtok((char*)usart_data_buffer," ");
-		char *h_char = strtok(NULL, ",");
-		char *m_char = strtok(NULL, ",");
+	char *command = strtok((char*)usart_data_buffer," ");
+	char *h_char = strtok(NULL, ",");
+	char *m_char = strtok(NULL, ",");
 
-		int h = atoi(h_char);
-		int m = atoi(m_char);
+	int h = atoi(h_char);
+	int m = atoi(m_char);
 
-		DS1302_setTtime(h,m);
+	DS1302_setTtime(h,m);
 
-		char string[32];
-		sprintf(string, "SET TIME -> %2d:%2d \r\n",h,m);
-		USART1_sendStr(string);
-	 	usart_data_buffer[0] = '\0';
+	char string[32];
+	sprintf(string, "SET TIME -> %2d:%2d \r\n",h,m);
+	USART1_sendStr(string);
+	usart_data_buffer[0] = '\0';
 
-	 		return 1;
+	return 1;
 
 	} else {
-			return 0;
-	}
-		
+
+	return 0;
+	}	
 }
+*/
 
 int main(void){
 
-	SystemClock_HSI_8MHz();
+	SystemClock_HSE_8MHz();
 	SysTick_init();
 
 	USART1_init(9600);
-//	PWM_init(50);
-//  DMA_init();
-	DS18_init();
-//	RTC_init();
 	I2C_init();
+	EXTI_init();
 	
+		RCC->AHBENR |= RCC_AHBENR_GPIOBEN; 
+
+		GPIOB->MODER &= ~((3 << (5*2))|(3 << (3*2))); // PB 5/3
+		GPIOB->MODER |= ((1 << (5*2))|(1 << (3*2))); // to out
+
+		GPIOB->PUPDR &= ~((3 << (5*2))|(3 << (3*2))); // PB 5/3
+		GPIOB->PUPDR |= ((1 << (5*2))|(1 << (3*2))); // up
+
+
 	USART1_sendStr("UART EN");
 
-//	RTC_setTime(16,00);
-DS1302_Init();
+//RTC_setTime(16,00);
+//DS1302_Init();
 //DS1302_setTtime(15,05);
 
 
-uint32_t start[3] = {0}; // нулевые стартовые значения 
-						 // для неблокирующих задержек
+uint32_t start[3] = {0}; 
+// нулевые стартовые значения 
+// для неблокирующих задержек
 
  while(1) {
 
-	USART_commands();
-
+//	USART_commands();
+/*
 	if (ms_ticks - start[0] >= 1000)
 	{
 		DS1302_getTtime(&hour,&min,&sec);
@@ -114,8 +122,27 @@ uint32_t start[3] = {0}; // нулевые стартовые значения
 
 		start[0] = ms_ticks;
 	}
-		
-	USART1_echo();
+	*/	
+if (ms_ticks - start[2] >= 2000)
+	{
+	AHT_to_USART();
+	start[2] = ms_ticks;
+	}
+
+
+if (ms_ticks - start[0] >= 500)
+	{
+	GPIOB->BSRR |= ((1 << 5)|(1 << (3+16))); 
+	start[0] = ms_ticks;
+	}
+
+if (ms_ticks - start[1] >= 1000)
+	{
+	GPIOB->BSRR |= ((1 << (5+16))|(1 << 3)); 
+	start[1] = ms_ticks;
+	}
+
+USART1_echo();
 
 	}
 }

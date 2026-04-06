@@ -13,6 +13,7 @@ void AHT_to_USART(){
 			USART1_sendStr("AHT EN\n\r");
 		} else {
 			USART1_sendStr("I2C none 0x38\n\r");
+			return;
 		}
 
 	I2C_writeByte(0x38,init_aht20,3);
