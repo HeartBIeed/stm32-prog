@@ -1,15 +1,17 @@
 #include "extint.h"
 
+volatile uint32_t count = 0;
+
 void EXTI_init(){
 RCC->AHBENR |= RCC_AHBENR_GPIOBEN; 
-RCC->APB2ENR |= RCC_APB2ENR_SYSCFGCOMPEN
+RCC->APB2ENR |= RCC_APB2ENR_SYSCFGCOMPEN;
 
 GPIOB->MODER &= ~(3 << (PB0 * 2)); //вход / 0x00
 
 
 // SYSCFG external interrupt configuration register 1 
-SYSCFG->EXTICR &= ~(0x000F); 
-SYSCFG->EXTICR |=(1<< 0) ; //x001: PB[x] pin 
+SYSCFG->EXTICR[0] &= ~(0xF << 0); 
+SYSCFG->EXTICR[0] |= (1 << 0); //x001: PB[x] pin 
 // PB0
 
 
@@ -28,9 +30,9 @@ void EXTI0_1_IRQHandler(void)
     if (EXTI->PR & (1 << 0)) 
     {
         
-        EXTI->PR |= (1 << 0); // Сбрасываем флаг 
+        EXTI->PR = (1 << 0); // Сбрасываем флаг 
         
-       //****
+       count++;
     }
     
 }

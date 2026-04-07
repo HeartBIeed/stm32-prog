@@ -8,4 +8,7 @@
 void EXTI_init();
 void EXTI0_1_IRQHandler(void);
 
+volatile extern uint32_t count;
+
+
 #endif /* EXTINT_H_ */

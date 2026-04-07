@@ -18,6 +18,7 @@
 #include "i2c.h"
 #include "aht20.h"
 #include "extint.h"
+#include "gcounter.h"
 
 //#include "dma.h"
 //#include "rtc.h"

@@ -123,9 +123,16 @@ uint32_t start[3] = {0};
 		start[0] = ms_ticks;
 	}
 	*/	
-if (ms_ticks - start[2] >= 2000)
+if (ms_ticks - start[2] >= 5000)
 	{
 	AHT_to_USART();
+
+	sprintf(string,"Counter: %02lu \n\r",count); 
+	USART1_sendStr(string);	
+
+	sprintf(string,"uSv: %02u \n\r",radiation()); 
+	USART1_sendStr(string);	
+
 	start[2] = ms_ticks;
 	}
 
